@@ -1,0 +1,27 @@
+
+TOKEN - mcEVIuv9gJz
+
+
+
+MEME
+-----
+ID
+Name
+img_link
+meme_template
+meme_text
+meme_username
+Author
+rating
+
+
+
+
+
+
+
+AUTHOR
+------
+ID
+Name
+Rating_author
