@@ -2,25 +2,26 @@ package tinqin.project.processor;
 
 import io.vavr.control.Either;
 import io.vavr.control.Try;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
-import tinqin.project.data.entity.Meme;
-import tinqin.project.data.repository.MemeRepository;
 import tinqin.project.error.general.GeneralServerError;
 import tinqin.project.error.meme.NoMemeFound;
 import tinqin.project.exeption.MemeNotFoundExeption;
+import tinqin.project.feign.MemeClient;
+import tinqin.project.feign.MemeCrudClient;
 import tinqin.project.generics.Error;
 import tinqin.project.models.meme.MemeRequest;
 import tinqin.project.models.meme.MemeResponse;
+import tinqin.project.models.meme.db.DBMemeRequest;
+import tinqin.project.models.meme.db.DBMemeResponse;
 import tinqin.project.operation.MemeProcessor;
 
 @Service
 public class MemeMainProcessor implements MemeProcessor {
-private final MemeRepository memeRepository;
-private final ConversionService conversionService;
-    public MemeMainProcessor(MemeRepository memeRepository, ConversionService conversionService) {
-        this.memeRepository = memeRepository;
-        this.conversionService = conversionService;
+private final MemeCrudClient memeCrudClient;
+
+    public MemeMainProcessor(MemeClient memeClient, MemeCrudClient memeCrudClient) {
+
+        this.memeCrudClient = memeCrudClient;
     }
 
     @Override
@@ -28,9 +29,19 @@ private final ConversionService conversionService;
     {
         return Try.of(()-> {
 
-            final Meme meme = memeRepository.findById(input.getMemeID())
-                    .orElseThrow(MemeNotFoundExeption::new);
-            return conversionService.convert(meme,MemeResponse.class);
+            final DBMemeResponse dbMemeResponse = memeCrudClient.getMeme(
+                    DBMemeRequest.builder().memeID(input.getMemeID()).build());
+            return MemeResponse.builder()
+                    .authorMeme(dbMemeResponse.getAuthorMeme())
+                    .memeName(dbMemeResponse.getMemeName())
+                    .avatarURL1(dbMemeResponse.getAvatarURL1())
+                    .avatarURL2(dbMemeResponse.getAvatarURL2())
+                    .text1(dbMemeResponse.getText1())
+                    .text2(dbMemeResponse.getText2())
+                    .username(dbMemeResponse.getUsername())
+                    .rating(dbMemeResponse.getRating())
+                    .build();
+
             }).toEither()
                 .mapLeft(throwable -> {
                     if(throwable instanceof MemeNotFoundExeption)

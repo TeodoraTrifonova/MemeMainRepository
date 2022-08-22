@@ -1,21 +1,20 @@
-package tinqin.project.data.entity;
+package tinqin.project.models.meme.db;
 
-import jakarta.persistence.*;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name="Meme")
+@Builder
 @Getter
-@Setter
-public class Meme {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Setter(AccessLevel.PRIVATE)
+public class DBMemeResponse {
+
     private Long memeID;
 
-    @ManyToOne
-    @JoinColumn(name = "authorID")
-    private Author authorMeme;
+    private String authorMeme;
 
     private String memeName;
 
