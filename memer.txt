@@ -20,8 +20,8 @@ Memer project
 
 
 service1 за свързване на api с нашият проект
+ 
+service2 за crud операции и справки https://github.com/TeodoraTrifonova/MemeCrudRepository
 
-service2 за crud операции и справки
 
-service3 
 
